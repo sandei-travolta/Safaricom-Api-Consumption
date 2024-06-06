@@ -1,20 +1,21 @@
-package Controllers;
+package com.sandeidevlab.Safaricom.Api.Consumption.Controllers;
 
-import Models.AutenticationResponse;
-import Services.MpesaService;
+import com.sandeidevlab.Safaricom.Api.Consumption.Models.AutenticationResponse;
+
+import com.sandeidevlab.Safaricom.Api.Consumption.Services.MpesaService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
 @RestController
+@RequestMapping("/api")
 public class MpesaServiceController {
-    public MpesaServiceController(MpesaService mpesaService) {
-        this.mpesaService = mpesaService;
-    }
 
-    MpesaService mpesaService;
+
+    MpesaService mpesaService=new MpesaService();
 
     @GetMapping("/authentication")
     ResponseEntity<AutenticationResponse> authennticationController(){
@@ -25,5 +26,9 @@ public class MpesaServiceController {
             e.printStackTrace();
             return ResponseEntity.status(500).build();
         }
+    }
+    @GetMapping("/test")
+    String testing(){
+        return "works";
     }
 }
