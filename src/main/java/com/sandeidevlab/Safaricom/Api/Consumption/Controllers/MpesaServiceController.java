@@ -2,11 +2,10 @@ package com.sandeidevlab.Safaricom.Api.Consumption.Controllers;
 
 import com.sandeidevlab.Safaricom.Api.Consumption.Models.AutenticationResponse;
 
+import com.sandeidevlab.Safaricom.Api.Consumption.Models.Callback;
 import com.sandeidevlab.Safaricom.Api.Consumption.Services.MpesaService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
@@ -30,5 +29,9 @@ public class MpesaServiceController {
     @GetMapping("/test")
     String testing(){
         return "works";
+    }
+    @PostMapping("/callback")
+    ResponseEntity<Callback>  callBack(@RequestBody request){
+
     }
 }

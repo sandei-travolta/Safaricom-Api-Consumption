@@ -7,5 +7,5 @@ import java.io.IOException;
 
 public interface MpesaEndPoints {
    public AutenticationResponse authenticationRequest() throws IOException;
-
+   public void validation();
 }

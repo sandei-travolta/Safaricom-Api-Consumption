@@ -39,4 +39,9 @@ public class MpesaService implements MpesaEndPoints{
         AutenticationResponse autenticationResponse = objectMapper.readValue(responseBody, AutenticationResponse.class);
         return autenticationResponse;
     }
+
+    @Override
+    public void validation() {
+
+    }
 }
