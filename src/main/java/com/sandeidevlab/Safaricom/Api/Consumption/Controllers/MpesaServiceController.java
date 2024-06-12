@@ -2,7 +2,7 @@ package com.sandeidevlab.Safaricom.Api.Consumption.Controllers;
 
 import com.sandeidevlab.Safaricom.Api.Consumption.Models.AutenticationResponse;
 
-import com.sandeidevlab.Safaricom.Api.Consumption.Models.Callback;
+import com.sandeidevlab.Safaricom.Api.Consumption.Models.StkCallbackResponse;
 import com.sandeidevlab.Safaricom.Api.Consumption.Services.MpesaService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +31,7 @@ public class MpesaServiceController {
         return "works";
     }
     @PostMapping("/callback")
-    ResponseEntity<Callback>  callBack(@RequestBody request){
-
+    ResponseEntity<StkCallbackResponse>  callBack(@RequestBody StkCallbackResponse request){
+        return ResponseEntity.ok(request);
     }
 }
