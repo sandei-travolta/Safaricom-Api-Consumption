@@ -1,9 +1,7 @@
 package com.sandeidevlab.Safaricom.Api.Consumption.Controllers;
 
-import com.sandeidevlab.Safaricom.Api.Consumption.Models.AutenticationResponse;
+import com.sandeidevlab.Safaricom.Api.Consumption.Models.*;
 
-import com.sandeidevlab.Safaricom.Api.Consumption.Models.InstatiatePayment;
-import com.sandeidevlab.Safaricom.Api.Consumption.Models.StkCallbackResponse;
 import com.sandeidevlab.Safaricom.Api.Consumption.Services.InsatiatePaymentService;
 import com.sandeidevlab.Safaricom.Api.Consumption.Services.MpesaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,13 +47,26 @@ public class MpesaServiceController {
         return ResponseEntity.ok(request);
     }
     @PostMapping("payment")
-    ResponseEntity instatiatePayment(@RequestBody InstatiatePayment instatiatePayment){
+    ResponseEntity<MpesaResponse> instatiatePayment(@RequestBody InstatiatePayment instatiatePayment){
         try {
-            boolean isSuccessfull=instatiatePaymentService.iniatePayment(instatiatePayment.getAmount(),instatiatePayment.getMobileNo());
-            if(!isSuccessfull){
+            MpesaResponse isSuccessfull=instatiatePaymentService.iniatePayment(instatiatePayment.getAmount(),instatiatePayment.getMobileNo());
+            if(isSuccessfull==null){
                 return ResponseEntity.status(500).build();
             }
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(isSuccessfull);
+        }
+        catch (IOException e){
+            return ResponseEntity.status(500).build();
+        }
+    }
+    @PostMapping("transactionStatus")
+    ResponseEntity<MpesaCheckoutResponse> transactionStatus(@RequestBody ValidationRequest validationRequest){
+        try {
+            MpesaCheckoutResponse isSuccessfull=instatiatePaymentService.paymentStatus(validationRequest.getCheckoutRequestID());
+            if (isSuccessfull==null){
+                return ResponseEntity.status(500).build();
+            }
+            return ResponseEntity.ok(isSuccessfull);
         }
         catch (IOException e){
             return ResponseEntity.status(500).build();

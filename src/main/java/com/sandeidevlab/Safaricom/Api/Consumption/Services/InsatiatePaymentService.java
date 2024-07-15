@@ -1,9 +1,7 @@
 package com.sandeidevlab.Safaricom.Api.Consumption.Services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sandeidevlab.Safaricom.Api.Consumption.Helpers.MpesaUtils;
-import com.sandeidevlab.Safaricom.Api.Consumption.Interfaces.MpesaEndPoints;
 import com.sandeidevlab.Safaricom.Api.Consumption.Interfaces.PaymentInterfaces;
 import com.sandeidevlab.Safaricom.Api.Consumption.Models.MpesaCheckoutRequest;
 import com.sandeidevlab.Safaricom.Api.Consumption.Models.MpesaCheckoutResponse;
@@ -27,7 +25,7 @@ public class InsatiatePaymentService implements PaymentInterfaces {
     }
 
     @Override
-    public boolean iniatePayment(int amount, String mobileNo)throws IOException {
+    public MpesaResponse iniatePayment(int amount, String mobileNo)throws IOException {
         ///Get auth-token and use it as bearer token
         String authKey = new MpesaService(dotenv).getKey();
         String shortCode = dotenv.get("SHORT-CODE");
@@ -66,7 +64,7 @@ public class InsatiatePaymentService implements PaymentInterfaces {
             if (!response.isSuccessful()) {
                 System.out.println("HTTP error code: " + response.code());
                 System.out.println("HTTP error code: " + response.body().string());
-                return false;
+                return null;
             }
 
             String responseBody = response.body().string();
@@ -75,7 +73,7 @@ public class InsatiatePaymentService implements PaymentInterfaces {
             ObjectMapper objectMapper = new ObjectMapper();
             MpesaResponse mpesaResponse = objectMapper.readValue(responseBody, MpesaResponse.class);
             System.out.println(mpesaResponse.getCustomerMessage());
-            return true;
+            return mpesaResponse;
             // Assuming paymentStatus is a method that checks the status based on mpesaResponse
             /*boolean isSuccessful = paymentStatus(mpesaResponse.getCheckoutRequestID());
             if (isSuccessful) {
@@ -88,39 +86,41 @@ public class InsatiatePaymentService implements PaymentInterfaces {
         } catch (IOException e) {
             System.err.println("Error during HTTP request: " + e.getMessage());
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 
 
     @Override
-    public boolean paymentStatus(String transactionCode) throws IOException {
+    public MpesaCheckoutResponse paymentStatus(String transactionCode) throws IOException {
         int shortCode=Integer.parseInt(dotenv.get("SHORT-CODE"));
+        String authKey = new MpesaService(dotenv).getKey();
         MpesaCheckoutRequest mpesaCheckoutRequest=new MpesaCheckoutRequest(
-                shortCode,
-                "MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjQwNzE0MTEyOTIx",
+                dotenv.get("SHORT-CODE"),
+                mpesaUtils.encodeBase64(dotenv.get("SHORT-CODE"),dotenv.get("PASS-KEY")),
                 mpesaUtils.getFormattedTimestamp(),
                 transactionCode
         );
         String jsonBody=mpesaCheckoutRequest.toJson();
+        System.out.println(jsonBody);
         OkHttpClient client=new OkHttpClient();
         RequestBody body =RequestBody.create(MediaType.parse("application/json"), jsonBody);
         Request request=new Request.Builder()
                 .url(dotenv.get("QUERY-URL"))
                 .method("POST",body)
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", "Bearer fiqd5AphY4ZnhZ8jKcIPlTQWuxuQ")
+                .addHeader("Authorization", "Bearer "+authKey)
                 .build();
         Response response=client.newCall(request).execute();
         if (!response.isSuccessful()){
-            return false;
+            System.out.println(response.body().string());
+            return null;
         }
         ObjectMapper objectMapper=new ObjectMapper();
         String respnseBody=response.body().string();
         MpesaCheckoutResponse mpesaCheckoutResponse=objectMapper.readValue(respnseBody,MpesaCheckoutResponse.class);
-        if (mpesaCheckoutResponse.getResponseCode()=="0"){
-            return true;
-        }
-        return false;
+        System.out.println(respnseBody);
+
+        return mpesaCheckoutResponse;
     }
 }

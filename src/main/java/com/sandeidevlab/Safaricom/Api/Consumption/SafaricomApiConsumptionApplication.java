@@ -10,6 +10,5 @@ public class SafaricomApiConsumptionApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SafaricomApiConsumptionApplication.class, args);
 	}
-
 }
 
