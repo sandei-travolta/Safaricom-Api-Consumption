@@ -7,5 +7,10 @@ import java.io.IOException;
 
 public interface MpesaEndPoints {
    public AutenticationResponse authenticationRequest() throws IOException;
-   public void validation();
+
+   void saveKey(String key, int timestap);
+
+   public Boolean isValid();
+   public String getKey() throws IOException;
+
 }
